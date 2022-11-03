@@ -26,6 +26,11 @@ body{
     height: 140px;
     background-color: rgb(151, 155, 158);
     border-radius: 10px;
+    text-align: right;
+    word-break: break-word;
+    font-family: Arial;
+    font-size: 70px;
+    line-height: 2;
 }
 
 .buttons{
