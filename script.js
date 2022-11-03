@@ -16,91 +16,125 @@ let operation="";
 
 //eventListener
 
+//to lose focus on a button clicked
+button.forEach(btn=>btn.addEventListener("click",()=>{
+    btn.blur();
+}));
+
 number.forEach(number=>number.addEventListener("click", ()=>{
-    if(displayLine.innerHTML==="0") displayLine.innerHTML="";
-    displayLine.innerHTML+=number.innerText;
+    appendNum(number.innerHTML);
 }));
 
 operater.forEach(operater=>operater.addEventListener("click",()=>{
-    if(operation!==""){
-        calculate();
-    }
-    firstNum=displayLine.innerHTML;
-    operation=operater.innerHTML;
-    displayLine.innerHTML=firstNum + operation;
-    
+    setOperation(operater.innerHTML)
 }));
 
-sum.addEventListener("click",()=>{
-    if(operation==="") return;
-    calculate();
-    operation="";
-});
+sum.addEventListener("click",getResult);
 
 ac.addEventListener("click",clearText);
 
 clear.addEventListener("click",()=>{
-    let removed=(displayLine.innerHTML).split("");
-    removed.pop();
-    displayLine.innerHTML=removed.join("");
- 
+    removeLastChar();
 });
 
-point.addEventListener("click",()=>{
-    checkPoint();
-    displayLine.innerHTML+=point.innerText;
+point.addEventListener("click",checkPoint);
+
+
+window.addEventListener('keydown', (e)=>{
+    if(!isNaN(e.key)) appendNum(e.key);
+    if(e.key==="+"|| e.key==="-"|| e.key==="*"|| e.key==="/") setOperation(convert(e.key));
+    if(e.key==="="|| e.key==="Enter") getResult();
+    if(e.key==="Backspace") removeLastChar();
+    if(e.key===".") checkPoint();
 });
 
 
 
 
 //functions
+    
+function appendNum(number){
+    if(displayLine.innerHTML==="0") displayLine.innerHTML="";
+    displayLine.innerHTML+=number;
+}
+    
+function setOperation(operater){
+    if(operation!==""){
+        calculate();
+    }
+    firstNum=displayLine.innerHTML;
+    operation=operater;
+    displayLine.innerHTML=firstNum + operation;
+}
+    
+function getResult(){
+    if(operation==="") return;
+    calculate();
+    operation="";
+}
 
 function calculate(){
     if((displayLine.innerHTML).split(operation).length>2){
         nextNum = (displayLine.innerHTML).split(operation)[2];
     }else{
         nextNum = (displayLine.innerHTML).split(operation)[1];
-    }
-
+    }    
     if(operation==="÷"&&nextNum==="0"){
         return displayLine.innerHTML="ERROR!";
     }
-    displayLine.innerHTML=Math.round(operate(operation,firstNum,nextNum)*1000)/1000;
+    result=Math.round(operate(operation,firstNum,nextNum)*1000)/1000;
+    displayLine.innerHTML=result;
 }
-
-
+        
 function clearText(){
     displayLine.innerHTML="0";
     firstNum="";
     nextNum="";
     operation="";
 }
-
-
+    
+function removeLastChar(){
+    let removed=(displayLine.innerHTML).split("");
+    let popped=removed.pop();
+    if(popped==="+"|| popped==="-"|| popped==="×"|| popped==="÷"){
+        operation="";
+    }
+    displayLine.innerHTML=removed.join("");
+}
+    
+    
 function checkPoint(){
     if(firstNum===""){
         if(displayLine.innerHTML.includes(".")) return;
     }else if(displayLine.innerHTML.split(operation).length>2&&
     displayLine.innerHTML.split(operation)[2].includes(".")){
         return;
+    }else if(displayLine.innerHTML.split(operation).length===2&&
+        displayLine.innerHTML.split(operation)[1].includes(".")){
+        return;
     }
+    displayLine.innerHTML+=point.innerText;
 }
 
-
-
+function convert(operater){
+    if(operater==="+") return "+"
+    if(operater==="-") return "-"
+    if(operater==="*") return "×"
+    if(operater==="/") return "÷"
+}
+    
 function add(a, b) {
     return a + b;
 }
-  
+    
 function substract(a, b) {
     return a - b;
 }
-  
+    
 function multiply(a, b) {
     return a * b;
 }
-  
+    
 function divide(a, b) {
     return a / b;
 }
